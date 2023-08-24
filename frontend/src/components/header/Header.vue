@@ -19,7 +19,7 @@
                         <router-link class="nav-link" to="/">Home</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link class="nav-link" to="/">Reservas</router-link>
+                        <router-link class="nav-link" to="/rentals">Reservas</router-link>
                     </li>
                     <li class="nav-item">
                         <router-link class="nav-link" to="/">Perfil</router-link>

@@ -4,6 +4,7 @@ import Home from '../pages/Home.vue';
 import Vehicle from '../pages/Vehicle.vue';
 import Login from '../pages/Login.vue';
 import Register from '../pages/Register.vue';
+import Rentals from '../pages/Rentals.vue';
 
 const routes = [
     {
@@ -25,6 +26,11 @@ const routes = [
         path:'/vehicle/:id',
         name: 'Vehicle',
         component: Vehicle
+    },
+    {
+        path: '/rentals',
+        name: 'Rentals',
+        component: Rentals
     }
 ]
 
