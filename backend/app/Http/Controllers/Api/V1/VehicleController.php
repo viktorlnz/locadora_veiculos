@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\VehicleResource;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 
 class VehicleController extends Controller
@@ -12,7 +14,7 @@ class VehicleController extends Controller
      */
     public function index()
     {
-        //
+        return VehicleResource::collection(Vehicle::with('vehicleDescritive')->get());
     }
 
     /**

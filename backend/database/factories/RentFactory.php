@@ -16,8 +16,19 @@ class RentFactory extends Factory
      */
     public function definition(): array
     {
+        $vehiclesNotRented = \App\Models\Vehicle::whereDoesntHave('rent')->pluck('id');
+        $users = \App\Models\User::pluck('id');
+
+        $startOfYear = now()->startOfYear();
+        $dtCreated = fake()->dateTimeBetween($startOfYear, now());
+        $deletedAt = fake()->boolean() ? fake()->dateTimeBetween($dtCreated, now()) : null;
+
         return [
-            //
+            'vehicle_id' => fake()->randomElement($vehiclesNotRented),
+            'user_id' => fake()->randomElement($users),
+            'rental_duration' => fake()->randomElement([30, 60, 90, 180]),
+            'created_at' => $dtCreated,
+            'deleted_at' => $deletedAt
         ];
     }
 }

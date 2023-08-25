@@ -12,18 +12,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory(10)->create();
-
-        \App\Models\User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'category' => 'COMMON'
-        ]);
-
-        \App\Models\User::factory()->create([
-            'name' => 'Test Admin',
-            'email' => 'test_admin@example.com',
-            'category' => 'ADMIN'
-        ]);
+        $this->call(UserSeeder::class);
+        $this->call(CategorySeeder::class);
+        $this->call(VehicleSeeder::class);
+        $this->call(RentSeeder::class);
     }
 }
