@@ -10,6 +10,6 @@ class VehicleDescritive extends Model
     use HasFactory;
 
     public function vehicle(){
-        return $this->belongsTo(Vehicle::class);
+        return $this->hasOne(Vehicle::class);
     }
 }

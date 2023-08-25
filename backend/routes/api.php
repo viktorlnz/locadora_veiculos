@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\RentController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\VehicleController;
 use Illuminate\Http\Request;
@@ -25,5 +26,9 @@ Route::prefix('v1')->group(function(){
     Route::get('/users/{user}', [UserController::class, 'show']);
 
     Route::get('/vehicles', [VehicleController::class, 'index']);
+    Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+
+    Route::get('/rents', [RentController::class, 'index']);
+    Route::get('/rents/{rent}', [RentController::class, 'show']);
 });
 

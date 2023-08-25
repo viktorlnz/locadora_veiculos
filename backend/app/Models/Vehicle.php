@@ -12,7 +12,7 @@ class Vehicle extends Model
 
 
     public function vehicleDescritive(){
-        return $this->hasOne(VehicleDescritive::class);
+        return $this->belongsTo(VehicleDescritive::class);
     }
 
     public function category(){

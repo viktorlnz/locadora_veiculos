@@ -17,7 +17,7 @@ class RentFactory extends Factory
     public function definition(): array
     {
         $vehiclesNotRented = \App\Models\Vehicle::whereDoesntHave('rent')->pluck('id');
-        $users = \App\Models\User::pluck('id');
+        $users = \App\Models\User::where('category', '<>', 'ADMIN')->pluck('id');
 
         $startOfYear = now()->startOfYear();
         $dtCreated = fake()->dateTimeBetween($startOfYear, now());
