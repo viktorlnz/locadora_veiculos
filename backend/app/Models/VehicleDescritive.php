@@ -9,6 +9,10 @@ class VehicleDescritive extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'color', 'ports', 'transmission'
+    ];
+
     public function vehicle(){
         return $this->hasOne(Vehicle::class);
     }

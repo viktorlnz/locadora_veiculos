@@ -10,6 +10,10 @@ class Rent extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'vehicle_id', 'user_id', 'rental_duration'
+    ];
+
     public function vehicle(){
         return $this->belongsTo(\App\Models\Vehicle::class);
     }

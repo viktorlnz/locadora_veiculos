@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\ImageController;
 use App\Http\Controllers\Api\V1\RentController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\VehicleController;
@@ -24,11 +26,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::prefix('v1')->group(function(){
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::post('/users', [UserController::class, 'store']);
+    Route::post('/users/admin', [UserController::class, 'storeAdmin']);
 
     Route::get('/vehicles', [VehicleController::class, 'index']);
     Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
+    Route::post('/vehicles', [VehicleController::class, 'store']);
 
     Route::get('/rents', [RentController::class, 'index']);
     Route::get('/rents/{rent}', [RentController::class, 'show']);
+    Route::post('/rents', [RentController::class, 'store']);
+
+    Route::get('/categories', [CategoryController::class, 'index']);
+    Route::get('/categories/{category}', [CategoryController::class, 'show']);
+    Route::post('/categories', [CategoryController::class, 'store']);
+
 });
 

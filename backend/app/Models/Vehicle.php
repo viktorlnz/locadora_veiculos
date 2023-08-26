@@ -10,6 +10,9 @@ class Vehicle extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'img', 'brand', 'model', 'price', 'plate', 'category_id'
+    ];
 
     public function vehicleDescritive(){
         return $this->belongsTo(VehicleDescritive::class);

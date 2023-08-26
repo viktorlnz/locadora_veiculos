@@ -32,7 +32,7 @@ class VehicleFactory extends Factory
             'plate' => fake()->regexify('[A-Z]{3}[0-9]{4}'),
             'brand' => fake()->word(),
             'model' => fake()->words(2, true),
-            'img' => $imagePath->getClientOriginalName(),
+            'img' => 'temp/' . $imagePath->getClientOriginalName(),
             'price' => fake()->randomFloat(2, 1, 9999.99),
             'category_id' => fake()->randomElement($categoryIds),
             'vehicle_descritive_id' => $vehicleDescritive->id

@@ -42,7 +42,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'category' => $this->category === 'ADMIN' ? 'Administrador' : 'Usuário comum',
-            'rents' => $rents
+            'rents' => $this->category === 'ADMIN' ? null : $rents
         ];
     }
 }

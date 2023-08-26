@@ -5,10 +5,15 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\V1\RentResource;
 use App\Models\Rent;
+use App\Traits\HttpResponses;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RentController extends Controller
 {
+    use HttpResponses;
+
     /**
      * Display a listing of the resource.
      */
@@ -18,19 +23,58 @@ class RentController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        $params = $request->all();
+
+        $validator = Validator::make($params, [
+            'vehicleId' => 'required|numeric',
+            'userId' => 'required|numeric',
+            'rentalDuration' => 'required|numeric|between:1,9999',
+        ]);
+
+        if($validator->fails()){
+            return $this->error('Dados inválidos', $validator->errors(), 422);
+        }
+
+        $validated = $validator->validated();
+
+        $rent = new Rent([
+            'vehicle_id' => $validated['vehicleId'],
+            'user_id' => $validated['userId'],
+            'rental_duration' => $validated['rentalDuration']
+        ]);
+
+        $user = \App\Models\User::where('id', $rent->user_id)->first();
+
+        if($user->category === 'ADMIN'){
+            return $this->error('Administrador não pode alugar veículo', [], 422, $user);
+        }
+
+        $currentDateTime = Carbon::now()->toDateTimeString();
+
+        $alreadyInExecutionRent = Rent::where('vehicle_id', $rent->vehicle_id)
+        ->whereRaw("created_at + INTERVAL rental_duration DAY > '$currentDateTime'")
+        ->first();
+
+        if($alreadyInExecutionRent || true){
+            return $this->error('Esse veículo já está alugado.', [], 422, $alreadyInExecutionRent);
+        }
+
+        try {
+
+            $created = $rent->save();
+
+            if(!$created){
+                return $this->error('Algo de errado ocorreu', [], 400);
+            }
+
+            return $this->response('Cadastrado com sucesso!', 200, new RentResource($rent));
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), [], 500, $rent);
+        }
     }
 
     /**
@@ -41,13 +85,6 @@ class RentController extends Controller
         return new RentResource($rent);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.

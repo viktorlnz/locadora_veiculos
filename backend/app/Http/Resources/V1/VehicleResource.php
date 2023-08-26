@@ -5,6 +5,7 @@ namespace App\Http\Resources\V1;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class VehicleResource extends JsonResource
 {
@@ -15,10 +16,6 @@ class VehicleResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $createdAt = Carbon::parse($this->vehicleDescritive->created_at)->format('Y-m-d H:i:s');
-
-        $updatedAt = Carbon::parse($this->vehicleDescritive->updated_at)->format('Y-m-d H:i:s');
-
         return [
             'id' => $this->id,
             'brand' => $this->brand,
@@ -31,9 +28,11 @@ class VehicleResource extends JsonResource
                 'color' => $this->vehicleDescritive->color,
                 'ports' => $this->vehicleDescritive->ports,
                 'transmission' => $this->vehicleDescritive->transmission,
-                'createdAt' => $createdAt,
-                'updatedAt' => $updatedAt
-            ]
+                'createdAt' => Carbon::parse($this->vehicleDescritive->created_at)->format('Y-m-d H:i:s'),
+                'updatedAt' => Carbon::parse($this->vehicleDescritive->updated_at)->format('Y-m-d H:i:s')
+            ],
+            'createdAt' => Carbon::parse($this->created_at)->format('Y-m-d H:i:s'),
+            'updatedAt' => Carbon::parse($this->updated_at)->format('Y-m-d H:i:s')
 
         ];
     }
