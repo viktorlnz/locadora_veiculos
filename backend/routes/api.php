@@ -32,14 +32,20 @@ Route::prefix('v1')->group(function(){
     Route::get('/vehicles', [VehicleController::class, 'index']);
     Route::get('/vehicles/{vehicle}', [VehicleController::class, 'show']);
     Route::post('/vehicles', [VehicleController::class, 'store']);
+    //POST no update para conseguir atualizar a imagem
+    Route::post('/vehicles/{vehicle}', [VehicleController::class, 'update']);
+    Route::delete('/vehicles/{vehicle}', [VehicleController::class, 'destroy']);
 
     Route::get('/rents', [RentController::class, 'index']);
     Route::get('/rents/{rent}', [RentController::class, 'show']);
     Route::post('/rents', [RentController::class, 'store']);
+    Route::delete('/rents/{rent}', [RentController::class, 'destroy']);
 
     Route::get('/categories', [CategoryController::class, 'index']);
     Route::get('/categories/{category}', [CategoryController::class, 'show']);
     Route::post('/categories', [CategoryController::class, 'store']);
+    Route::put('/categories/{category}', [CategoryController::class, 'update']);
+    Route::delete('/categories/{category}', [CategoryController::class, 'destroy']);
 
 });
 

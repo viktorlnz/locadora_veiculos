@@ -8,6 +8,7 @@ use App\Models\Vehicle;
 use App\Models\VehicleDescritive;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class VehicleController extends Controller
@@ -85,23 +86,112 @@ class VehicleController extends Controller
      */
     public function show(Vehicle $vehicle)
     {
-        echo asset('storage/images/4CYTM46aJsWiKxQHAlmpScQ3GagS2IU1HYdef5ZR.jpg');
         return new VehicleResource($vehicle);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Vehicle $vehicle)
     {
-        //
+        $params = $request->all();
+
+        if(isset($params['plate'])){
+            $params['plate'] = str_replace('-', '', strtoupper($request->plate));
+        }
+
+        $vehicleValidator = Validator::make([
+            'brand' => $params['brand'] ?? null,
+            'model' => $params['model'] ?? null,
+            'img' => $params['img'] ?? null,
+            'price' => $params['price'] ?? null,
+            'plate' => $params['plate'] ?? null,
+            'category_id' => $params['categoryId'] ?? null
+        ], [
+            'brand' => 'nullable|max:50',
+            'model' => 'nullable|max:80',
+            'img' => 'nullable|file|mimes:jpeg,png,gif',
+            'price' => 'nullable|numeric|between:0,9999999.99',
+            'plate' => ['nullable','string', 'regex:/^[A-Z]{3}\d{4}$|^[A-Z]{3}\d[A-Z]\d{2}$/'],
+            'categoryId' => 'nullable|numeric',
+        ]);
+
+        $vehicleDescritiveValidator = Validator::make([
+            'color' => $params['color'] ?? null,
+            'ports' => $params['ports'] ?? null,
+            'transmission' => $params['transmission'] ?? null
+        ], [
+            'color' => 'nullable|max:100',
+            'ports' => 'nullable|numeric|between:1,100',
+            'transmission' => 'nullable|max:80'
+        ]);
+
+        if($vehicleValidator->fails()){
+            return $this->error('Validação falhou', $vehicleValidator->errors(), 422);
+        }
+
+        if($vehicleDescritiveValidator->fails()){
+            return $this->error('Validação falhou', $vehicleDescritiveValidator->errors(), 422);
+        }
+
+        $vehicleValidated = $vehicleValidator->validated();
+        $vehicleDescritiveValidated = $vehicleDescritiveValidator->validated();
+
+        $vehicle->load('vehicleDescritive');
+
+        foreach ($vehicleValidated as $key => $value) {
+            if($key === 'img'){
+                continue;
+            }
+
+            if(isset($value)){
+                $vehicle->{$key} = $value;
+            }
+        }
+
+        foreach ($vehicleDescritiveValidated as $key => $value) {
+            if(isset($value)){
+                $vehicle->vehicleDescritive->{$key} = $value;
+            }
+        }
+
+        try {
+            if(isset($vehicleValidated['img'])){
+                $imagePath = $request->file('img')->store('images');
+                Storage::delete($vehicle->img);
+                $vehicle->img = $imagePath;
+            }
+
+            $updated = $vehicle->save() && $vehicle->vehicleDescritive->save();
+
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), [], 500, $vehicle);
+        }
+
+        if(!$updated){
+            return $this->error('Item não atualizado',['updated' => false], 400, $vehicle);
+        }
+
+        return $this->response('Atualizado com sucesso!', 200, new VehicleResource($vehicle));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Vehicle $vehicle)
     {
-        //
+        $deleted = false;
+
+        try {
+            $deleted = $vehicle->delete();
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), [], 500, $vehicle);
+        }
+
+        if(!$deleted){
+            return $this->error('Algo de errado ocorreu na exclusão do item', [], 400, $vehicle);
+        }
+
+        return $this->response('', 204);
     }
 }

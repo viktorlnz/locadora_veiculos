@@ -60,16 +60,53 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Category $category)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|max:80'
+            //nullable
+        ]);
+
+        if($validator->fails()){
+            return $this->error('Validação falhou', $validator->errors(), 422);
+        }
+
+        $validated = $validator->validated();
+
+
+        try {
+            $updated = $category->update([
+                'name' => $validated['name']
+            ]);
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), [], 500, $validated);
+        }
+
+        if(!$updated){
+            return $this->error('Item não atualizado',['updated' => false], 400, $validated);
+        }
+
+        return $this->response('Atualizado com sucesso!', 200, new CategoryResource($category));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Category $category)
     {
-        //
+        $deleted = false;
+
+        try {
+            $deleted = $category->delete();
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), [], 500, $category);
+        }
+
+        if(!$deleted){
+            return $this->error('Algo de errado ocorreu na exclusão do item', [], 400, $category);
+        }
+
+        return $this->response('', 204);
+
     }
 }

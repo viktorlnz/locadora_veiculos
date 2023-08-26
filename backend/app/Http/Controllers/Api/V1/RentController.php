@@ -80,8 +80,9 @@ class RentController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Rent $rent)
+    public function show(string $id)
     {
+        $rent = Rent::withTrashed()->findOrFail($id);
         return new RentResource($rent);
     }
 
@@ -97,8 +98,20 @@ class RentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Rent $rent)
     {
-        //
+        $deleted = false;
+
+        try {
+            $deleted = $rent->delete();
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), [], 500, $rent);
+        }
+
+        if(!$deleted){
+            return $this->error('Algo de errado ocorreu na exclusão do item', [], 400, $rent);
+        }
+
+        return $this->response('', 204);
     }
 }
