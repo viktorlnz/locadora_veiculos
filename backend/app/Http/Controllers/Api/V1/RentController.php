@@ -19,7 +19,20 @@ class RentController extends Controller
      */
     public function index()
     {
-        return RentResource::collection(Rent::withTrashed()->with('vehicle')->get());
+        return RentResource::collection(
+            Rent::withTrashed()
+            ->with(['vehicle' => function($query){$query->withTrashed();}])
+            ->get()
+        );
+    }
+
+    public function indexUser(int $id){
+        return RentResource::collection(
+            Rent::withTrashed()
+            ->where('user_id', $id)
+            ->with(['vehicle' => function($query){$query->withTrashed();}])
+            ->get()
+        );
     }
 
     /**
@@ -31,7 +44,6 @@ class RentController extends Controller
 
         $validator = Validator::make($params, [
             'vehicleId' => 'required|numeric',
-            'userId' => 'required|numeric',
             'rentalDuration' => 'required|numeric|between:1,9999',
         ]);
 
@@ -43,15 +55,15 @@ class RentController extends Controller
 
         $rent = new Rent([
             'vehicle_id' => $validated['vehicleId'],
-            'user_id' => $validated['userId'],
+            'user_id' => $request->user()->id,
             'rental_duration' => $validated['rentalDuration']
         ]);
 
-        $user = \App\Models\User::where('id', $rent->user_id)->first();
+        /*$user = \App\Models\User::where('id', $rent->user_id)->first();
 
         if($user->category === 'ADMIN'){
             return $this->error('Administrador não pode alugar veículo', [], 422, $user);
-        }
+        }*/
 
         $currentDateTime = Carbon::now()->toDateTimeString();
 
@@ -59,7 +71,7 @@ class RentController extends Controller
         ->whereRaw("created_at + INTERVAL rental_duration DAY > '$currentDateTime'")
         ->first();
 
-        if($alreadyInExecutionRent || true){
+        if($alreadyInExecutionRent){
             return $this->error('Esse veículo já está alugado.', [], 422, $alreadyInExecutionRent);
         }
 
@@ -98,9 +110,13 @@ class RentController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Rent $rent)
+    public function destroy(Request $request, Rent $rent)
     {
         $deleted = false;
+
+        if($request->user()->id !== $rent->user_id){
+            return $this->error('O usuário autenticado não tem autorização para cancelar essa reserva', [], 403, $rent);
+        }
 
         try {
             $deleted = $rent->delete();

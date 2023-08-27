@@ -18,9 +18,26 @@ class VehicleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return VehicleResource::collection(Vehicle::with('vehicleDescritive')->get());
+        $filterParam = $request->query('filter');
+
+        if (!isset($filterParam)){
+            return VehicleResource::collection(Vehicle::with('vehicleDescritive')->get());
+        }
+
+        return VehicleResource::collection(
+            Vehicle::where('brand', 'like', '%' . $filterParam . '%')
+            ->orWhere('model', 'like', '%' . $filterParam . '%')
+            ->orWhere('plate', 'like', '%' . $filterParam . '%')
+            ->orWhereHas('vehicleDescritive', function($query) use ($filterParam){
+                $query->where('color', 'like', '%' . $filterParam . '%')
+                ->orWhere('ports', 'like', '%' . $filterParam . '%')
+                ->orWhere('transmission', 'like', '%' . $filterParam . '%');
+            })
+            ->get()
+        );
+
     }
 
     /**
