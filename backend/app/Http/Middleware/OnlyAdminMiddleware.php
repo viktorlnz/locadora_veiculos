@@ -19,7 +19,7 @@ class OnlyAdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if(!$request->user()->tokenCan('ADMIN')){
-            return $this->error('Não autorizado', [], 403);
+            return $this->error('Não autorizado', [], 401);
         }
 
         return $next($request);

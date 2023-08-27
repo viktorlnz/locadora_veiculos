@@ -3,13 +3,18 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\V1\UserResource;
 use App\Traits\HttpResponses;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-//1|laravel_sanctum_UGtNl0X9kwOXPJ1Fhrz9sRdM6qOSdTy1CPKbIjj001bbe807
+
 class AuthController extends Controller
 {
     use HttpResponses;
+
+    public function getAuthenticated(Request $request){
+        return new UserResource($request->user());
+    }
 
     public function login(Request $request){
         if(Auth::attempt($request->only('email', 'password'))){
@@ -26,6 +31,13 @@ class AuthController extends Controller
     }
 
     public function logout(Request $request){
+        try {
+            $request->user()->currentAccessToken()->delete();
+        } catch (\Throwable $th) {
+            return $this->error($th->getMessage(), [], 500, ['logout' => false]);
+        }
+
+        return $this->response('Token removido', 200, ['logout' => true]);
 
     }
 }

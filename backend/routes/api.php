@@ -49,6 +49,8 @@ Route::prefix('v1')->group(function(){
             Route::delete('/rents/{rent}', [RentController::class, 'destroy']);
         });
 
+        Route::get('/authenticated', [AuthController::class, 'getAuthenticated']);
+
         Route::post('/logout', [AuthController::class, 'logout']);
     });
 
