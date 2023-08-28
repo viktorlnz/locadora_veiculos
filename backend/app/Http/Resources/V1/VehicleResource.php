@@ -35,6 +35,7 @@ class VehicleResource extends JsonResource
             'price' => $this->price,
             'plate' => substr($this->plate, 0, 3) . '-' . substr($this->plate, 3, 4),
             'category' => $this->category->name,
+            'categoryId' => $this->category->id,
             'vehicleDescritive' => [
                 'id' => $this->vehicleDescritive->id,
                 'color' => $this->vehicleDescritive->color,
