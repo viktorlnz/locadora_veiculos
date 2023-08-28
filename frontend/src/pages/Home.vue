@@ -22,10 +22,10 @@ onMounted(() =>{
     getVehicles();
 });
 
-function getVehicles(){
+function getVehicles(search = ''){
     loaded.value = false;
     
-    api('/vehicles')
+    api('/vehicles' + (search === '' ? '' : '?filter='+search))
     .then(res =>{
         console.log(res);
         vehicles.value = res.data;
@@ -44,7 +44,7 @@ function getVehicles(){
         <h2>Reserve já o seu veículo preferido!</h2>
         <div class="container-xxl">
             <div>
-                <SearchVehicle />
+                <SearchVehicle :search-function="getVehicles" />
             </div>
             <div class="container-lg d-flex flex-wrap justify-content-evenly">
                 <VehicleCard v-show="loaded" v-for="v of vehicles" :key="v.id" :vehicle="v"/>

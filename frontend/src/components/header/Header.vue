@@ -1,3 +1,36 @@
+<script setup>
+import { onMounted, ref } from 'vue';
+import api from '../../utils/api';
+import { useRouter } from 'vue-router';
+import { removeToken } from '../../utils/tokenStorage';
+
+const loginName = ref(null);
+
+const router = useRouter();
+
+onMounted(() => {
+    verifyLogin();
+})
+
+function verifyLogin(){
+    api('/authenticated')
+    .then( res =>{
+        console.log(res.data);
+
+        loginName.value = res.data.firstName;
+    });
+}
+
+function logoff(){
+    api('/logout', 'POST')
+    .then(() => {
+        removeToken();
+        router.push('/');
+    })
+    .catch( error => console.error());
+}
+</script>
+
 <template>
     <header>
         <nav class="navbar navbar-expand-md navbar-light bg-primary" data-bs-theme="dark">
@@ -21,14 +54,17 @@
                     <li class="nav-item">
                         <router-link class="nav-link" to="/rentals">Reservas</router-link>
                     </li>
-                    <li class="nav-item">
+                    <!--<li class="nav-item">
                         <router-link class="nav-link" to="/">Perfil</router-link>
                     </li>
                     <li class="nav-item">
                         <router-link class="nav-link" to="/">Sobre Nós</router-link>
-                    </li>
-                    <li class="nav-item p-1 text-center" id="li-login">
+                    </li>-->
+                    <li v-if="loginName === null" class="nav-item p-1 text-center" id="li-login">
                         <router-link class="nav-link" to="/login">Login</router-link>
+                    </li>
+                    <li v-else class="nav-item">
+                        <span class="text-white nav-link">Olá {{ loginName }}. <span @click="logoff" class="text-warning logoff">Logoff</span></span>
                     </li>
                   </ul>
             </div>
@@ -54,6 +90,18 @@
         .nav-link{
             color: white !important;
             font-weight: 400 !important;
+
+            
         }
+        
     }
+    span.logoff{
+        cursor: pointer;
+        font-weight: bold;
+
+        &:hover{
+            color: rgb(232, 135, 38);
+        }    
+    }
+    
 </style>
