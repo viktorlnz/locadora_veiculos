@@ -4,12 +4,13 @@ import serverUrl from './serverUrl';
 
 const url = serverUrl() + '/api/v1';
 
-const api = (route, method = 'GET', body = null) => {
+const api = (route, method = 'GET', body = null, contentType= 'application/json') => {
   const token = getToken();
 
   const headers = {
     'Accept': 'application/json',
     'Authorization': `Bearer ${token}`,
+    'Content-Type': contentType
   };
 
   const axiosConfig = {

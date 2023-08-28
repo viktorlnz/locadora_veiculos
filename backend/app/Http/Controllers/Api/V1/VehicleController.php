@@ -54,7 +54,7 @@ class VehicleController extends Controller
             'img' => 'required|file|mimes:jpeg,png,gif',
             'price' => 'required|numeric|between:0,9999999.99',
             'plate' => ['required','string', 'regex:/^[A-Z]{3}\d{4}$|^[A-Z]{3}\d[A-Z]\d{2}$/'],
-            'categoryId' => 'required|numeric',
+            'categoryId' => 'required|numeric|gt:0',
             'color' => 'required|max:100',
             'ports' => 'required|numeric|between:1,100',
             'transmission' => 'required|max:80'
@@ -130,7 +130,7 @@ class VehicleController extends Controller
             'img' => 'nullable|file|mimes:jpeg,png,gif',
             'price' => 'nullable|numeric|between:0,9999999.99',
             'plate' => ['nullable','string', 'regex:/^[A-Z]{3}\d{4}$|^[A-Z]{3}\d[A-Z]\d{2}$/'],
-            'categoryId' => 'nullable|numeric',
+            'categoryId' => 'nullable|numeric|gt:0',
         ]);
 
         $vehicleDescritiveValidator = Validator::make([

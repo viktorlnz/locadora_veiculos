@@ -1,31 +1,26 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import Header from '../components/header/Header.vue';
-import api from '../utils/api';
+
+import api from '../../../utils/api';
 import { useRouter } from 'vue-router';
-import { getToken } from '../utils/tokenStorage';
 
 const form = ref({
     name: '',
     email: '',
     password: '',
-    rememberPassword: ''
+    rememberPassword: '',
+    category: ''
 });
 
 const errors = ref({
     name: '',
     email: '',
     password: '',
-    rememberPassword: ''  
+    rememberPassword: '',
+    category: ''
 })
 
 const router = useRouter();
-
-function checkLogin(){
-    if(getToken() !== null){
-        router.push('/');
-    }
-}
 
 function submit(){
     if(form.value.password !== form.value.rememberPassword){
@@ -33,8 +28,13 @@ function submit(){
         return;
     }
 
-    api('/users', 'POST', form.value)
-    .then( res => {router.push('/login')})
+    if(form.value.category === ''){
+        errors.value.category = 'Selecione um tipo de usuário';
+        return;
+    }
+
+    api('/users' + (form.value.category === 'ADMIN' ? '/admin' : ''), 'POST', form.value)
+    .then( res => {router.push('/admin/users')})
     .catch(error => {
         console.error(error);
 
@@ -48,14 +48,18 @@ function submit(){
     });
 }
 
-onMounted(() => checkLogin());
 </script>
 
 <template>
-    <Header />
     <div class="container-fluid">
         <h1 class="text-center">Registro de usuário</h1>
         <form @submit.prevent="submit" class="container-md d-flex flex-column">
+            <select class="form-select" aria-label="Category" v-model="form.category">
+                <option value="">Selecione o tipo de usuário</option>
+                <option value="ADMIN">Administrador</option>
+                <option value="COMMON">Usuário comum</option>
+            </select>
+            <p class="text-danger">{{ errors.category }}</p>
             <div class="mb-3">
                 <label for="name" class="form-label">Nome</label>
                 <input type="text" class="form-control" id="name" aria-describedby="Name" v-model="form.name" required/>
@@ -79,7 +83,7 @@ onMounted(() => checkLogin());
             </div>
 
             <button type="submit" class="btn btn-primary btn-lg mx-5">Registrar</button>
-            <p class="text-secondary me-5 text-end">Já tem uma conta? <router-link to="/login">Autentique-se</router-link></p>
+            <p class="text-secondary me-5 text-end"><router-link to="/admin/users">Clique aqui</router-link> para retornar</p>
         </form>
     </div>
     

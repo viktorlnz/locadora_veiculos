@@ -10,6 +10,8 @@ import HomeAdmin from '../pages/admin/Home.vue';
 import VehiclesAdmin from '../pages/admin/vehicles/Vehicles.vue';
 import LoginAdmin from '../pages/admin/Login.vue';
 import RegisterVehicle from '../pages/admin/vehicles/Register.vue';
+import UsersAdmin from '../pages/admin/users/Users.vue';
+import RegisterUserAdmin from '../pages/admin/users/Register.vue';
 import api from "../utils/api";
 
 const routes = [
@@ -64,6 +66,16 @@ const routes = [
             name: 'updateVehicle',
             component: RegisterVehicle
           },
+          {
+            path: 'users',
+            name: 'AdminUsers',
+            component: UsersAdmin
+          },
+          {
+            path: 'users/register',
+            name: 'AdminRegister',
+            component: RegisterUserAdmin
+          }
         ]
     },
     {

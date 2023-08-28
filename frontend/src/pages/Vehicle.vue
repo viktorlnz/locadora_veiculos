@@ -24,6 +24,8 @@
         }
     });
 
+    const rentalDuration = ref(0);
+
     function getVehicle(){
         const route = useRoute();
 
@@ -37,6 +39,25 @@
             loaded.value = true;
         })
         .catch(error => console.error(error));
+    }
+
+    function rentVehicle(){
+        if(rentalDuration.value == 0){
+            return;
+        }
+
+        const form = {
+            rentalDuration: rentalDuration.value,
+            vehicleId: vehicle.value.id
+        }
+
+        api('/rents', 'POST', form)
+        .then(res => {
+            vehicle.value.rented = true;
+        })
+        .catch(error => {
+            console.error(error);
+        })
     }
 
     onMounted(()=>{
@@ -68,7 +89,18 @@
                 </div>
                 
                 <div class="container-md d-flex">
-                    <button v-if="!vehicle.rented" class="btn btn-success btn-lg">Reservar</button>
+                    <form v-if="!vehicle.rented" @submit.prevent="rentVehicle">
+                        <select class="form-select" v-model="rentalDuration" aria-label="Dias de reserva">
+                            <option value="0">Quantos dias de reserva</option>
+                            <option value="30">30</option>
+                            <option value="60">60</option>
+                            <option value="90">90</option>
+                            <option value="120">120</option>
+                            <option value="150">150</option>
+                        </select>
+                        <button  type="submit" class="btn btn-success btn-lg m-3">Reservar</button>
+                    </form>
+                    
                     <p class="text-center text-danger" v-else>Veículo já reservado</p>
                 </div>
             </div>

@@ -20,7 +20,7 @@ class VehicleFactory extends Factory
     public function definition(): array
     {
 
-        $imagePath = UploadedFile::fake()->image('vehicle.jpg');
+        $imagePath = UploadedFile::fake()->image('vehicle'.fake()->randomNumber(10000).'.jpg');
 
         $imagePath->move(storage_path('app/temp'), $imagePath->getClientOriginalName());
 
