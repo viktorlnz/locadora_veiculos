@@ -2,7 +2,7 @@
 
 ## Pré-requisitos
 
-Para usar o sistema, você precisa ter instalado PHP, MySQL, composer e node.js.
+Para usar o sistema, você precisa ter instalado PHP, MySQL executando, composer e node.js.
 
 ## Instruções de back-end
 
