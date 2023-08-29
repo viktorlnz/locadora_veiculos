@@ -11,7 +11,8 @@ Para usar o sistema, você precisa ter instalado PHP, MySQL, composer e node.js.
 
    1. `composer install` para instalar as dependências do back-end.
    2. `php artisan migrate --seed` para instalar o banco de dados e os dados de teste.
-   3. `php artisan serve` para ligar o servidor.
+   3. `php artisan storage:link` para indexar o diretório de imagens na pasta publica
+   4. `php artisan serve` para ligar o servidor.
 
 ## Instruções de front-end
 
