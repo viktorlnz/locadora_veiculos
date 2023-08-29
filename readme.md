@@ -25,4 +25,4 @@ Para usar o sistema, você precisa ter instalado PHP, MySQL, composer e node.js.
 ## Autenticação
 
 * Para autenticação, use o e-mail `test@example.com` com a senha `password`.
-* Para usar o administrador, acesse `http://localhost:5173/admin`. O e-mail do usuário administrador é `test_admin@example.com`.
+* Para usar o administrador, acesse `http://localhost:5173/admin`. O e-mail do usuário administrador é `test_admin@example.com` e a senha também é `password`.
