@@ -19,6 +19,11 @@ import Notification from '../components/notification/Notification.vue';
         .then(res => {
             console.log(res);
             addToken(res.data.token);
+            if(router.options.history.state.back === '/register'){
+                router.push('/');
+                return;
+            }
+            
             router.back();
         })
         .catch(error => {

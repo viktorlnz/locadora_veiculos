@@ -25,7 +25,9 @@ function logoff(){
     api('/logout', 'POST')
     .then(() => {
         removeToken();
+        loginName.value === null;
         router.push('/');
+        router.go();
     })
     .catch( error => console.error());
 }
